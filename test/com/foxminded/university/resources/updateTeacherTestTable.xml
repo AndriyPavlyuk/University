@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>	
+	<TEACHERS teacher_id='1' first_name='Aleksandr' last_name='Saliuk' />
+	<TEACHERS teacher_id='2' first_name='Volodymur' last_name='Petrenko' />
+</dataset>
