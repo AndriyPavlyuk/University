@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+	<SCHEDULERECORDS SCHEDULERECORDS_id='1' date_time='2010-01-01 12:00:00' group_id='3' subject_id='2' room_id='1'/>
+	<SCHEDULERECORDS SCHEDULERECORDS_id='2' date_time='2010-01-01 12:00:00' group_id='3' subject_id='2' room_id='1'/>
+	<SCHEDULERECORDS SCHEDULERECORDS_id='3' date_time='2010-01-01 12:00:00' group_id='3' subject_id='2' room_id='1'/>
+</dataset>
