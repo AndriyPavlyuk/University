@@ -2,7 +2,7 @@ package com.foxminded.university.domain;
 
 public class Subject {
 	private String name;
-	private long subjectID;
+	private Long subjectID;
 	private Teacher teacher;
 
 	public Subject() {
@@ -13,7 +13,7 @@ public class Subject {
 		this.name = name;
 	}
 
-	public Subject(long subjectID) {
+	public Subject(Long subjectID) {
 		this.subjectID= subjectID;
 	}
 
@@ -25,11 +25,11 @@ public class Subject {
 		this.name = name;
 	}
 	
-	public long getSubjectID() {
+	public Long getSubjectID() {
 		return subjectID;
 	}
 
-	public void setSubjectID(long subjectID) {
+	public void setSubjectID(Long subjectID) {
 		this.subjectID = subjectID;
 	}
 

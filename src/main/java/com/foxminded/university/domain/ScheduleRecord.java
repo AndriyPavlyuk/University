@@ -8,7 +8,7 @@ public class ScheduleRecord {
 	private Subject subject;
 	private Group group;
 	private Room room;
-	private long scheduleRecordID;
+	private Long scheduleRecordID;
 	
 	public ScheduleRecord() {
 
@@ -57,11 +57,11 @@ public class ScheduleRecord {
 		this.room = room;
 	}
 	
-	public long getScheduleRecordID() {
+	public Long getScheduleRecordID() {
 		return scheduleRecordID;
 	}
 
-	public void setScheduleRecordID(long scheduleRecordID) {
+	public void setScheduleRecordID(Long scheduleRecordID) {
 		this.scheduleRecordID = scheduleRecordID;
 	}
 

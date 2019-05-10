@@ -6,7 +6,16 @@ import java.util.List;
 public abstract class Person {
 	private String firstName;
 	private String lastName;
-	private long personID;
+	private Long personID;
+
+	public Person() {
+		
+	}
+	public Person(Long personID, String firstName, String lastName) {
+		this.personID=personID;
+		this.firstName=firstName;
+		this.lastName=lastName;
+	}
 
 	public String getFirstName() {
 		return firstName;
@@ -24,11 +33,11 @@ public abstract class Person {
 		this.lastName = lastName;
 	}
 
-	public long getPersonID() {
+	public Long getPersonID() {
 		return personID;
 	}
 
-	public void setPersonID(long personID) {
+	public void setPersonID(Long personID) {
 		this.personID = personID;
 	}
 

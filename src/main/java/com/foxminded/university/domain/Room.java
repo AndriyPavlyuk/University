@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Room {
 	private Integer number;
-	private long roomID;
+	private Long roomID;
 	
 	public Room() {
 
@@ -13,15 +13,15 @@ public class Room {
 		this.number = number;
 	}
 
-	public Room(long roomID) {
+	public Room(Long roomID) {
 		this.roomID = roomID;
 	}
 	
-	public long getRoomID() {
+	public Long getRoomID() {
 		return roomID;
 	}
 
-	public void setRoomID(long roomID) {
+	public void setRoomID(Long roomID) {
 		this.roomID = roomID;
 	}
 	

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-
+<!DOCTYPE xml>
 <dataset>	
 	<TEACHERS teacher_id='1' first_name='Sebastien' last_name='Loeb' />
 	<TEACHERS teacher_id='2' first_name='Volodymur' last_name='Petrenko' />

@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-
-<dataset>	
-	<STUDENTS student_id='1' group_id='3' first_name='Sebastien' last_name='Loeb' />
-	<STUDENTS student_id='2' group_id='3' first_name='Peter' last_name='Solberg' />
-</dataset>

@@ -12,8 +12,7 @@ public class ConnectionProperties {
 	static{
 		Properties properties = new Properties();
 		try {
-			ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-			InputStream dbPropertiesFile = classLoader.getResourceAsStream("db.properties");
+			InputStream dbPropertiesFile = ConnectionProperties.class.getClassLoader().getResourceAsStream("db.properties");
 			properties.load(dbPropertiesFile);
 			DRIVER = properties.getProperty("db.Driver");
 			URL = properties.getProperty("db.Url");
