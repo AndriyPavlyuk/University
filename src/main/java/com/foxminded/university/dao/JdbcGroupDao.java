@@ -10,11 +10,20 @@ import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.foxminded.university.domain.Group;
 
-public class JdbcGroupDao extends AbstractJdbcDao implements GroupDao {
+@Repository
+public class JdbcGroupDao implements GroupDao {
 	private static final Logger logger = LoggerFactory.getLogger(JdbcGroupDao.class);
+		
+	@Autowired
+	private DataSourceConnection dataSourceConnection;
+	
+	public JdbcGroupDao(){
+	}
 	
 	@Override
 	public Collection<Group> findAll() throws DaoException {
@@ -25,7 +34,7 @@ public class JdbcGroupDao extends AbstractJdbcDao implements GroupDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection =  dataSourceConnection.getDataSourceConnection();
 			statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
 			while (resultSet.next()) {
@@ -71,7 +80,7 @@ public class JdbcGroupDao extends AbstractJdbcDao implements GroupDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -117,7 +126,7 @@ public class JdbcGroupDao extends AbstractJdbcDao implements GroupDao {
 		String sql = "INSERT INTO GROUPS (GROUP_ID, NAME) VALUES(?,?)";
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection =dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, group.getGroupID());
 			preparedStatement.setString(2, group.getName());
@@ -156,7 +165,7 @@ public class JdbcGroupDao extends AbstractJdbcDao implements GroupDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, group.getName());
 			preparedStatement.setLong(2, group.getGroupID());
@@ -195,7 +204,7 @@ public class JdbcGroupDao extends AbstractJdbcDao implements GroupDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, group.getGroupID());
 			preparedStatement.executeUpdate();

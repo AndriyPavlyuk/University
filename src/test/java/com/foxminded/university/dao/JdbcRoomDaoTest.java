@@ -2,8 +2,11 @@ package com.foxminded.university.dao;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
 
@@ -18,18 +21,26 @@ import org.dbunit.operation.DatabaseOperation;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.foxminded.university.dao.ConnectionProperties;
 import com.foxminded.university.dao.JdbcRoomDao;
+import com.foxminded.university.domain.Group;
 import com.foxminded.university.domain.Room;
-
+@Component
 public class JdbcRoomDaoTest extends DBTestCase {
 	private final String DRIVER = ConnectionProperties.DRIVER;
 	private final String URL = ConnectionProperties.URL;
 	private final String USER_NAME = ConnectionProperties.USER_NAME;
 	private final String PASSWORD = ConnectionProperties.PASSWORD;
 	private JdbcRoomDao jdbcRoomDao;
+	@Autowired
+	private DataSourceConnection dataSourceConnection;
 
+	public JdbcRoomDaoTest() {
+		
+	}
 	public JdbcRoomDaoTest(String name) {
 		super(name);
 		System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_DRIVER_CLASS, DRIVER);
@@ -67,8 +78,26 @@ public class JdbcRoomDaoTest extends DBTestCase {
 	}
 
 	@Before
-	public void setUp() throws SQLException {
-		jdbcRoomDao = new JdbcRoomDao();
+	public void setUp() throws SQLException, DaoException {
+		 jdbcRoomDao = new JdbcRoomDao();
+		// dataSourceConnection=mock(DataSourceConnection.class);
+	//	 doReturn(dataSourceConnection).when(jdbcRoomDao).getDataSourceConnection();
+		// doReturn(createConnection()).when(dataSourceConnection).getDataSourceConnection();
+		// when(jdbcRoomDao.getDataSourceConnection()).thenReturn(createConnection());
+		// when(dataSourceConnection.getDataSourceConnection()).thenReturn(createConnection());
+		 dataSourceConnection.getDataSourceConnection();
+	}
+		
+	private Connection createConnection() throws DaoException {
+		Connection connection = null;
+		try {
+			Class.forName(DRIVER);
+			connection = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			throw new DaoException("Db properties could not be founded",e);
+		}
+		return connection;
 	}
 	
 	@Test
@@ -91,6 +120,7 @@ public class JdbcRoomDaoTest extends DBTestCase {
 		Room room = new Room();
 		room.setRoomID(roomID);
 		room.setNumber(number);
+		System.out.println(room);
 		jdbcRoomDao.addRoom(room);
 		ITable actualTable = getActualTable();
 		/* When */

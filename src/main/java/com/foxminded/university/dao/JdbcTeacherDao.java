@@ -9,10 +9,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.foxminded.university.domain.Teacher;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public class JdbcTeacherDao extends AbstractJdbcDao implements TeacherDao {
+import com.foxminded.university.domain.Teacher;
+@Component
+public class JdbcTeacherDao implements TeacherDao {
 	private static final Logger logger = LoggerFactory.getLogger(JdbcTeacherDao.class);
+	@Autowired
+	private DataSourceConnection dataSourceConnection;
 	
 	public JdbcTeacherDao() {
 	}
@@ -26,7 +31,7 @@ public class JdbcTeacherDao extends AbstractJdbcDao implements TeacherDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
 			while (resultSet.next()) {
@@ -73,7 +78,7 @@ public class JdbcTeacherDao extends AbstractJdbcDao implements TeacherDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -121,7 +126,7 @@ public class JdbcTeacherDao extends AbstractJdbcDao implements TeacherDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, teacher.getPersonID());
 			preparedStatement.setString(2, teacher.getFirstName());
@@ -161,7 +166,7 @@ public class JdbcTeacherDao extends AbstractJdbcDao implements TeacherDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, teacher.getFirstName());
 			preparedStatement.setString(2, teacher.getLastName());
@@ -201,7 +206,7 @@ public class JdbcTeacherDao extends AbstractJdbcDao implements TeacherDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, teacher.getPersonID());
 			preparedStatement.executeUpdate();
@@ -225,5 +230,8 @@ public class JdbcTeacherDao extends AbstractJdbcDao implements TeacherDao {
 			}
 		}
 		logger.info("Teacher was removed");
+	}
+	public DataSourceConnection getDataSourceConnection() {
+		return dataSourceConnection;
 	}
 }

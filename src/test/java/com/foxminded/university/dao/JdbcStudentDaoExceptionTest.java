@@ -1,12 +1,18 @@
 package com.foxminded.university.dao;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
+import static org.mockito.Mockito.*;
 
 import com.foxminded.university.dao.DaoException;
 import com.foxminded.university.dao.GroupDao;
@@ -17,16 +23,37 @@ import com.foxminded.university.domain.Student;
 public class JdbcStudentDaoExceptionTest {
 	private JdbcStudentDao jdbcStudentDao;
 	private GroupDao groupDao;
+	private final String DRIVER = ConnectionProperties.DRIVER;
+	private final String URL = ConnectionProperties.URL;
+	private final String USER_NAME = ConnectionProperties.USER_NAME;
+	private final String PASSWORD = ConnectionProperties.PASSWORD;
+	private DataSourceConnection dataSourceConnection;
+	
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
 	@Before
 	public void setUp() throws DaoException {
 		long groupID = 3;
-		groupDao = Mockito.mock(GroupDao.class);
-		jdbcStudentDao = new JdbcStudentDao(groupDao);
-		Mockito.when(groupDao.findById(groupID)).thenReturn(new Group(groupID));
+		groupDao = mock(GroupDao.class);
+		when(groupDao.findById(groupID)).thenReturn(new Group(groupID));
 		thrown.expect(DaoException.class);
+		jdbcStudentDao= spy(new JdbcStudentDao(groupDao));
+	    dataSourceConnection=spy(DataSourceConnection.class);
+		doReturn(dataSourceConnection).when(jdbcStudentDao).getDataSourceConnection();
+		doReturn(createConnection()).when(dataSourceConnection).getConnection();
+	}
+	
+	private Connection createConnection() throws DaoException {
+		Connection connection = null;
+		try {
+			Class.forName(DRIVER);
+			connection = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			throw new DaoException("Db properties could not be founded",e);
+		}
+		return connection;
 	}
 
 	@Test
@@ -43,12 +70,12 @@ public class JdbcStudentDaoExceptionTest {
 
 	@Test
 	public void testAddStudentsWithSameID() throws DaoException {
-		long studentID = 3;
+		long studentID = 2;
 		long groupID = 3;
 		Student student = new Student();
 		student.setPersonID(studentID);
-		student.setFirstName("Ivan");
-		student.setLastName("Gorbyn");
+		student.setFirstName("Peter");
+		student.setLastName("Solberg");
 		student.setGroup(groupDao.findById(groupID));
 		Student studentSameID = new Student();
 		studentSameID.setPersonID(studentID);

@@ -10,12 +10,20 @@ import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.foxminded.university.domain.Room;
-
-public class JdbcRoomDao extends AbstractJdbcDao implements RoomDao {
+@Component
+public class JdbcRoomDao implements RoomDao {
 	private static final Logger logger = LoggerFactory.getLogger(JdbcRoomDao.class);
 	
+	@Autowired
+	private DataSourceConnection dataSourceConnection;
+	
+	public JdbcRoomDao() {
+	}
+
 	@Override
 	public Collection<Room> findAll() throws DaoException {
 		logger.debug("Searching rooms");
@@ -25,7 +33,7 @@ public class JdbcRoomDao extends AbstractJdbcDao implements RoomDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
 			while (resultSet.next()) {
@@ -71,7 +79,7 @@ public class JdbcRoomDao extends AbstractJdbcDao implements RoomDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection =dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -118,7 +126,7 @@ public class JdbcRoomDao extends AbstractJdbcDao implements RoomDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, room.getRoomID());
 			preparedStatement.setInt(2, room.getNumber());
@@ -157,7 +165,7 @@ public class JdbcRoomDao extends AbstractJdbcDao implements RoomDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, room.getNumber());
 			preparedStatement.setLong(2, room.getRoomID());
@@ -196,7 +204,7 @@ public class JdbcRoomDao extends AbstractJdbcDao implements RoomDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, room.getRoomID());
 			preparedStatement.executeUpdate();

@@ -48,8 +48,9 @@ input[type=submit] {
 	<table>
 		<h1>University Management</h1>
 		<h2>
-			<a href="StudentForm.jsp">Add Student</a> &nbsp;&nbsp;&nbsp; 
-			<a href="students">List of Students</a>
+		 <a href="students?action=insert">Add Student</a>
+		 &nbsp;&nbsp;&nbsp;
+		 <a href="students?action=StudentList">List of Students</a>
 		</h2>
 	</table>
 	<table>
@@ -70,22 +71,8 @@ input[type=submit] {
 				<td>${student.getGroup().getName()}</td>
 				<td>${student.firstName}</td>
 				<td>${student.lastName}</td>
-				<td>
-					<form method="post">
-						<input name="_method" type="hidden" value="delete"> <input
-							name="studentID" type="hidden" value="${student.getPersonID()}">
-						<input style="background: #F00;" type="submit" value="Delete">
-					</form>
-				</td>
-				<td>
-					<form action = "StudentUpdate.jsp"  method="post">
-						<input name="studentID" type="hidden" value="${student.getPersonID()}">
-						<input name="groupID" type="hidden" value="${student.getGroup().getName()}">
-						<input name="firstName" type="hidden" value="${student.firstName}">
-						<input name="lastName" type="hidden" value="${student.lastName}">
-						<input type="submit" value="Update">
-					</form>
-				</td>
+				<td><a href="students?action=delete&personID=<c:out value="${student.personID}"/>">Delete</a></td>
+				<td><a href="students?action=edit&personID=<c:out value="${student.personID}"/>">Update</a></td> 
 			</tr>
 		</c:forEach>
 	</table>

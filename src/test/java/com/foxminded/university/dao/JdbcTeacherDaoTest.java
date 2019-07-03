@@ -2,8 +2,12 @@ package com.foxminded.university.dao;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
 
@@ -30,6 +34,7 @@ public class JdbcTeacherDaoTest extends DBTestCase {
 	private final String USER_NAME = ConnectionProperties.USER_NAME;
 	private final String PASSWORD = ConnectionProperties.PASSWORD;
 	private JdbcTeacherDao jdbcTeacherDao;
+	private DataSourceConnection dataSourceConnection;
 
 	public JdbcTeacherDaoTest(String name) {
 		super(name);
@@ -68,10 +73,25 @@ public class JdbcTeacherDaoTest extends DBTestCase {
 	}
 
 	@Before
-	public void setUp() throws SQLException {
-		jdbcTeacherDao = new JdbcTeacherDao();
+	public void setUp() throws SQLException, DaoException {
+		 jdbcTeacherDao = spy(JdbcTeacherDao.class);
+	     dataSourceConnection=spy(DataSourceConnection.class);
+		 doReturn(dataSourceConnection).when(jdbcTeacherDao).getDataSourceConnection();
+		 doReturn(createConnection()).when(dataSourceConnection).getConnection();
 	}
-
+	
+	private Connection createConnection() throws DaoException {
+		Connection connection = null;
+		try {
+			Class.forName(DRIVER);
+			connection = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			throw new DaoException("Db properties could not be founded",e);
+		}
+		return connection;
+	}
+	
 	@Test
 	public void testFindAll() throws Exception {
 		/* Given */

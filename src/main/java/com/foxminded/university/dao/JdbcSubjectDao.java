@@ -11,8 +11,13 @@ import java.util.Collection;
 import com.foxminded.university.domain.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-public class JdbcSubjectDao extends AbstractJdbcDao implements SubjectDao {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+@Component
+public class JdbcSubjectDao implements SubjectDao {
 	private static final Logger logger = LoggerFactory.getLogger(JdbcSubjectDao.class);
+	@Autowired
+	private DataSourceConnection dataSourceConnection;
 	
 	@Override
 	public Collection<Subject> findAll() throws DaoException {
@@ -23,7 +28,7 @@ public class JdbcSubjectDao extends AbstractJdbcDao implements SubjectDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
 			while (resultSet.next()) {
@@ -69,7 +74,7 @@ public class JdbcSubjectDao extends AbstractJdbcDao implements SubjectDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -116,7 +121,7 @@ public class JdbcSubjectDao extends AbstractJdbcDao implements SubjectDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, subject.getSubjectID());
 			preparedStatement.setString(2, subject.getName());
@@ -155,7 +160,7 @@ public class JdbcSubjectDao extends AbstractJdbcDao implements SubjectDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, subject.getName());
 			preparedStatement.setLong(2, subject.getSubjectID());
@@ -194,7 +199,7 @@ public class JdbcSubjectDao extends AbstractJdbcDao implements SubjectDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, subject.getSubjectID());
 			preparedStatement.executeUpdate();

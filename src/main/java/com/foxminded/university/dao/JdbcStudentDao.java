@@ -10,13 +10,23 @@ import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.foxminded.university.domain.Student;
 
-public class JdbcStudentDao extends AbstractJdbcDao implements StudentDao {
+@Repository
+public class JdbcStudentDao implements StudentDao {
+	@Autowired
 	private GroupDao groupDao;
 	private static final Logger logger = LoggerFactory.getLogger(JdbcStudentDao.class);
-	
+	@Autowired
+	private DataSourceConnection dataSourceConnection;
+
+	public JdbcStudentDao() {
+	}
+
+	@Autowired
 	public JdbcStudentDao(GroupDao groupDao) {
 		this.groupDao = groupDao;
 	}
@@ -30,7 +40,7 @@ public class JdbcStudentDao extends AbstractJdbcDao implements StudentDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
 			while (resultSet.next()) {
@@ -44,7 +54,7 @@ public class JdbcStudentDao extends AbstractJdbcDao implements StudentDao {
 			logger.trace("Number of students : {}", studentsList.size());
 		} catch (SQLException e) {
 			logger.warn("Can not find students : " + e);
-			throw new DaoException("Can not find students",e);
+			throw new DaoException("Can not find students", e);
 		} finally {
 			if (statement != null) {
 				try {
@@ -78,7 +88,7 @@ public class JdbcStudentDao extends AbstractJdbcDao implements StudentDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -88,13 +98,13 @@ public class JdbcStudentDao extends AbstractJdbcDao implements StudentDao {
 				student.setFirstName(resultSet.getString("FIRST_NAME"));
 				student.setLastName(resultSet.getString("LAST_NAME"));
 			}
-			if (student.getPersonID()==null) {
+			if (student.getPersonID() == null) {
 				logger.warn("Can not find student : " + student.getPersonID());
 				throw new DaoException("Can not find student");
 			}
 		} catch (SQLException e) {
 			logger.warn("Can not find students : " + e);
-			throw new DaoException("Can not find student",e);
+			throw new DaoException("Can not find student", e);
 		} finally {
 			if (preparedStatement != null) {
 				try {
@@ -127,7 +137,7 @@ public class JdbcStudentDao extends AbstractJdbcDao implements StudentDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, student.getPersonID());
 			preparedStatement.setLong(2, student.getGroup().getGroupID());
@@ -136,7 +146,7 @@ public class JdbcStudentDao extends AbstractJdbcDao implements StudentDao {
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			logger.warn("Can not add students : " + e);
-			throw new DaoException("Can not add student",e);
+			throw new DaoException("Can not add student", e);
 		} finally {
 			if (preparedStatement != null) {
 				try {
@@ -168,7 +178,7 @@ public class JdbcStudentDao extends AbstractJdbcDao implements StudentDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, student.getGroup().getGroupID());
 			preparedStatement.setString(2, student.getFirstName());
@@ -177,7 +187,7 @@ public class JdbcStudentDao extends AbstractJdbcDao implements StudentDao {
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			logger.warn("Can not update student : " + e);
-			throw new DaoException("Can not update student",e);
+			throw new DaoException("Can not update student", e);
 		} finally {
 			if (preparedStatement != null) {
 				try {
@@ -209,13 +219,13 @@ public class JdbcStudentDao extends AbstractJdbcDao implements StudentDao {
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, student.getPersonID());
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			logger.warn("Can not remove student : " + e);
-			throw new DaoException("Can not remove student",e);
+			throw new DaoException("Can not remove student", e);
 		} finally {
 			if (preparedStatement != null) {
 				try {

@@ -2,8 +2,13 @@ package com.foxminded.university.dao;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Collection;
 
 import org.dbunit.Assertion;
@@ -17,7 +22,7 @@ import org.dbunit.operation.DatabaseOperation;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import static org.mockito.Mockito.*;
 
 import com.foxminded.university.dao.ConnectionProperties;
 import com.foxminded.university.dao.GroupDao;
@@ -32,6 +37,7 @@ public class JdbcStudentDaoTest extends DBTestCase {
 	private final String PASSWORD = ConnectionProperties.PASSWORD;
 	private JdbcStudentDao jdbcStudentDao;
 	private GroupDao groupDao;
+	private DataSourceConnection dataSourceConnection;
 
 	public JdbcStudentDaoTest(String name) {
 		super(name);
@@ -48,7 +54,7 @@ public class JdbcStudentDaoTest extends DBTestCase {
 	}
 
 	protected DatabaseOperation getSetUpOperation() throws Exception {
-		return DatabaseOperation.REFRESH;
+		return DatabaseOperation.CLEAN_INSERT;
 	}
 
 	protected DatabaseOperation getTearDownOperation() throws Exception {
@@ -72,9 +78,24 @@ public class JdbcStudentDaoTest extends DBTestCase {
 	@Before
 	public void setUp() throws Exception {
 		long groupID=3;
-		groupDao = Mockito.mock(GroupDao.class);
-		jdbcStudentDao = new JdbcStudentDao(groupDao);
-		Mockito.when(groupDao.findById(groupID)).thenReturn(new Group(groupID));
+		groupDao = mock(GroupDao.class);
+		when(groupDao.findById(groupID)).thenReturn(new Group(groupID));
+		jdbcStudentDao= spy(new JdbcStudentDao(groupDao));
+		dataSourceConnection=spy(DataSourceConnection.class);
+		doReturn(dataSourceConnection).when(jdbcStudentDao).getDataSourceConnection();
+		doReturn(createConnection()).when(dataSourceConnection).getConnection();
+	}
+	
+	private Connection createConnection() throws DaoException {
+		Connection connection = null;
+		try {
+			Class.forName(DRIVER);
+			connection = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			throw new DaoException("Db properties could not be founded",e);
+		}
+		return connection;
 	}
 	
 	@Test

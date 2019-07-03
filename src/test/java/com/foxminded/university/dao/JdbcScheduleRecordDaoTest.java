@@ -2,8 +2,13 @@ package com.foxminded.university.dao;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -18,7 +23,6 @@ import org.dbunit.operation.DatabaseOperation;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.powermock.api.mockito.PowerMockito;
 
 import com.foxminded.university.dao.ConnectionProperties;
 import com.foxminded.university.dao.GroupDao;
@@ -30,6 +34,8 @@ import com.foxminded.university.domain.Room;
 import com.foxminded.university.domain.ScheduleRecord;
 import com.foxminded.university.domain.Subject;
 
+import static org.mockito.Mockito.*;
+
 public class JdbcScheduleRecordDaoTest extends DBTestCase {
 	private final String DRIVER = ConnectionProperties.DRIVER;
 	private final String URL = ConnectionProperties.URL;
@@ -39,6 +45,7 @@ public class JdbcScheduleRecordDaoTest extends DBTestCase {
 	private GroupDao groupDao;
 	private SubjectDao subjectDao;
 	private RoomDao roomDao;
+	private DataSourceConnection dataSourceConnection;
 
 	public JdbcScheduleRecordDaoTest(String name) {
 		super(name);
@@ -82,14 +89,29 @@ public class JdbcScheduleRecordDaoTest extends DBTestCase {
 		long groupID1=2;
 		long subjectID=2;
 		long roomID=1;
-		groupDao = PowerMockito.mock(GroupDao.class);
-		subjectDao = PowerMockito.mock(SubjectDao.class);
-		roomDao=PowerMockito.mock(RoomDao.class);
-		jdbcScheduleRecordDao = new JdbcScheduleRecordDao(groupDao, subjectDao, roomDao);
-		PowerMockito.when(groupDao.findById(groupID)).thenReturn(new Group(groupID));
-		PowerMockito.when(subjectDao.findById(subjectID)).thenReturn(new Subject(subjectID));
-		PowerMockito.when(roomDao.findById(roomID)).thenReturn(new Room(roomID));
-		PowerMockito.when(groupDao.findById(groupID1)).thenReturn(new Group(groupID1));
+		groupDao = mock(GroupDao.class);
+		subjectDao = mock(SubjectDao.class);
+		roomDao=mock(RoomDao.class);
+		when(groupDao.findById(groupID)).thenReturn(new Group(groupID));
+		when(subjectDao.findById(subjectID)).thenReturn(new Subject(subjectID));
+		when(roomDao.findById(roomID)).thenReturn(new Room(roomID));
+		when(groupDao.findById(groupID1)).thenReturn(new Group(groupID1));
+		jdbcScheduleRecordDao = spy(new JdbcScheduleRecordDao(groupDao, subjectDao, roomDao));
+	    dataSourceConnection=spy(DataSourceConnection.class);
+		doReturn(dataSourceConnection).when(jdbcScheduleRecordDao).getDataSourceConnection();
+		doReturn(createConnection()).when(dataSourceConnection).getConnection();
+	}
+	
+	private Connection createConnection() throws DaoException {
+		Connection connection = null;
+		try {
+			Class.forName(DRIVER);
+			connection = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			throw new DaoException("Db properties could not be founded",e);
+		}
+		return connection;
 	}
 	
 	@Test

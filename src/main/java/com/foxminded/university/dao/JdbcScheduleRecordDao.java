@@ -10,15 +10,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.foxminded.university.domain.ScheduleRecord;
-
-public class JdbcScheduleRecordDao extends AbstractJdbcDao implements ScheduleRecordDao{
+@Component
+public class JdbcScheduleRecordDao implements ScheduleRecordDao{
 	private SubjectDao subjectDao;
 	private GroupDao groupDao;
 	private RoomDao roomDao;
 	private static final Logger logger = LoggerFactory.getLogger(JdbcScheduleRecordDao.class);
-
+	@Autowired
+	private DataSourceConnection dataSourceConnection;
+	
 	public JdbcScheduleRecordDao() {
 	}
 	public JdbcScheduleRecordDao(GroupDao groupDao,SubjectDao subjectDao, RoomDao roomDao) {
@@ -36,7 +40,7 @@ public class JdbcScheduleRecordDao extends AbstractJdbcDao implements ScheduleRe
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
 			while (resultSet.next()) {
@@ -85,7 +89,7 @@ public class JdbcScheduleRecordDao extends AbstractJdbcDao implements ScheduleRe
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -135,7 +139,7 @@ public class JdbcScheduleRecordDao extends AbstractJdbcDao implements ScheduleRe
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection =dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, scheduleRecord.getScheduleRecordID());
 			preparedStatement.setObject(2, scheduleRecord.getTime());
@@ -177,7 +181,7 @@ public class JdbcScheduleRecordDao extends AbstractJdbcDao implements ScheduleRe
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection = dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setObject(1, scheduleRecord.getTime());
 			preparedStatement.setLong(2, scheduleRecord.getGroup().getGroupID());
@@ -219,7 +223,7 @@ public class JdbcScheduleRecordDao extends AbstractJdbcDao implements ScheduleRe
 		Connection connection = null;
 		try {
 			logger.trace("Open connection with database");
-			connection = getConnection();
+			connection =dataSourceConnection.getDataSourceConnection();
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, scheduleRecord.getScheduleRecordID());
 			preparedStatement.executeUpdate();
@@ -243,5 +247,8 @@ public class JdbcScheduleRecordDao extends AbstractJdbcDao implements ScheduleRe
 			}
 		}
 		logger.info("Schedule record was removed");
+	}
+	public DataSourceConnection getDataSourceConnection() {
+		return dataSourceConnection;
 	}
 }

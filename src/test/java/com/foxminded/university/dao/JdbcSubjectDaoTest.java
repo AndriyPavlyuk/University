@@ -2,8 +2,13 @@ package com.foxminded.university.dao;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
 
@@ -22,6 +27,7 @@ import org.junit.Test;
 
 import com.foxminded.university.dao.ConnectionProperties;
 import com.foxminded.university.dao.JdbcSubjectDao;
+import com.foxminded.university.domain.Group;
 import com.foxminded.university.domain.Subject;
 
 public class JdbcSubjectDaoTest extends DBTestCase {
@@ -30,6 +36,7 @@ public class JdbcSubjectDaoTest extends DBTestCase {
 	private final String USER_NAME = ConnectionProperties.USER_NAME;
 	private final String PASSWORD = ConnectionProperties.PASSWORD;
 	private JdbcSubjectDao jdbcSubjectDao;
+	private DataSourceConnection dataSourceConnection;
 
 	public JdbcSubjectDaoTest(String name) {
 		super(name);
@@ -68,8 +75,26 @@ public class JdbcSubjectDaoTest extends DBTestCase {
 	}
 
 	@Before
-	public void setUp() throws SQLException {
-		jdbcSubjectDao = new JdbcSubjectDao();
+	public void setUp() throws SQLException, DaoException {
+		 jdbcSubjectDao = spy(JdbcSubjectDao.class);
+		 dataSourceConnection=spy(DataSourceConnection.class);
+		// doReturn(dataSourceConnection).when(jdbcSubjectDao).getDataSourceConnection();
+		// when(jdbcSubjectDao).thenReturn(dataSourceConnection.getDataSourceConnection());
+		// when(dataSourceConnection.getDataSourceConnection()).thenReturn(createConnection());
+	 doReturn(createConnection()).when(jdbcSubjectDao).getDataSourceConnection();
+		 
+	}
+	
+	private Connection createConnection() throws DaoException {
+		Connection connection = null;
+		try {
+			Class.forName(DRIVER);
+			connection = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			throw new DaoException("Db properties could not be founded",e);
+		}
+		return connection;
 	}
 	
 	@Test
