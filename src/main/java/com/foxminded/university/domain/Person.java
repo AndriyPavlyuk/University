@@ -3,10 +3,17 @@ package com.foxminded.university.domain;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+@MappedSuperclass
 public abstract class Person {
-	private String firstName;
-	private String lastName;
+	@Id
 	private Long personID;
+	@Column
+	private String firstName;
+	@Column
+	private String lastName;
 
 	public Person() {
 		

@@ -3,12 +3,31 @@ package com.foxminded.university.domain;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+@Entity
+@Table(name = "scheduleRecord")
+@NamedQuery(name = ScheduleRecord.FIND_ALL, query = "FROM ScheduleRecord")
 public class ScheduleRecord {
-	private LocalDateTime time;
-	private Subject subject;
-	private Group group;
-	private Room room;
+	public static final String FIND_ALL = "Group.findAll";
+	@Id
 	private Long scheduleRecordID;
+	@Column
+	private LocalDateTime time;
+	@ManyToOne
+    @JoinColumn(name = "subject_id")
+	private Subject subject;
+	@ManyToOne
+    @JoinColumn(name = "group_id")
+	private Group group;
+	@ManyToOne
+    @JoinColumn(name = "room_id")
+	private Room room;
 	
 	public ScheduleRecord() {
 

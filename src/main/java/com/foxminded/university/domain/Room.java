@@ -2,9 +2,20 @@ package com.foxminded.university.domain;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+@Entity
+@Table(name = "rooms")
+@NamedQuery(name = Room.FIND_ALL, query = "FROM Room")
 public class Room {
-	private Integer number;
+	public static final String FIND_ALL = "Room.findAll";
+	@Id
 	private Long roomID;
+	@Column
+	private Integer number;
 	
 	public Room() {
 

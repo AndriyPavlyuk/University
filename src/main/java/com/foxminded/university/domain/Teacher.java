@@ -7,11 +7,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Entity
+@Table(name = "teachers")
+@NamedQuery(name = Teacher.FIND_ALL, query = "FROM Teacher")
 public class Teacher extends Person {
+	public static final String FIND_ALL = "Room.findAll";
+	@Transient
 	private Collection<Subject> subjects;
+	@Transient
 	private List<ScheduleRecord> lessons;
 	private static final Logger logger = LoggerFactory.getLogger(Teacher.class);
 

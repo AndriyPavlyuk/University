@@ -5,17 +5,32 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Objects.isNull;
 
+@Entity
+@Table(name = "groups")
+@NamedQuery(name = Group.FIND_ALL, query = "FROM Group")
 public class Group {
-	private Long groupID;
-	private String name;
-	private Collection<Student> students;
-	private List<ScheduleRecord> lessons;
+	public static final String FIND_ALL = "Group.findAll";
 	private static final Logger logger = LoggerFactory.getLogger(Group.class);
+	@Id
+	private Long groupID;
+	@Column
+	private String name;
+	@Transient
+	private Collection<Student> students;
+	@Transient
+	private List<ScheduleRecord> lessons;
 	
 	public Group() {
 	}
@@ -23,7 +38,7 @@ public class Group {
 	public Group(Long groupID) {
 		this.groupID = groupID;
 	}
-
+	
 	public String getName() {
 		return name;
 	}
@@ -31,6 +46,7 @@ public class Group {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 	public Long getGroupID() {
 		return groupID;
 	}

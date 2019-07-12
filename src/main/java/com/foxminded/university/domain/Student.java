@@ -5,11 +5,23 @@ import static java.util.Objects.isNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+@Entity
+@Table(name = "students")
+@NamedQuery(name = Student.FIND_ALL, query = "FROM Student")
 public class Student extends Person {
 	private static final Logger logger = LoggerFactory.getLogger(Student.class);
+	public static final String FIND_ALL = "Student.findAll";
+	@ManyToOne
+    @JoinColumn(name = "groupid")
 	private Group group;
 
 	public Group getGroup() {

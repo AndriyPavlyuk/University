@@ -16,17 +16,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.foxminded.university.dao.DaoException;
-import com.foxminded.university.dao.JdbcGroupDao;
-import com.foxminded.university.dao.JdbcStudentDao;
+import com.foxminded.university.dao.HibernateGroupDao;
+import com.foxminded.university.dao.HibernateStudentDao;
 import com.foxminded.university.domain.Student;
 
 @Controller
 public class StudentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	@Autowired
-	private JdbcGroupDao jdbcGroupDao;
+	private HibernateGroupDao hibernateGroupDao;
 	@Autowired
-	private JdbcStudentDao jdbcStudentDao;
+	private HibernateStudentDao hibernateStudentDao;
 	private Student student;
 	private static String INSERT_OR_EDIT = "/StudentAdd.jsp";
     private static String LIST_STUDENT = "/StudentList.jsp";
@@ -42,38 +42,29 @@ public class StudentServlet extends HttpServlet {
 	    	if (action.equalsIgnoreCase("delete")){
 	            long studentID = Long.parseLong(request.getParameter("personID"));
 	            try {
-					student = jdbcStudentDao.findById(studentID);
+					student = hibernateStudentDao.findById(studentID);
 				} catch (DaoException e1) {
 					e1.printStackTrace();
 				}
 	            try {
-					jdbcStudentDao.removeStudent(student);
+	            	hibernateStudentDao.removeStudent(student);
 				} catch (DaoException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 	            forward = LIST_STUDENT;
-	            try {
-					request.setAttribute("students", jdbcStudentDao.findAll());
-				} catch (DaoException e) {
-					e.printStackTrace();
-				}    
+	            request.setAttribute("students", hibernateStudentDao.findAll());    
 	        } else if (action.equalsIgnoreCase("edit")){
 	            forward = INSERT_OR_EDIT;
 	            int studentID = Integer.parseInt(request.getParameter("personID"));
 	            try {
-					student = jdbcStudentDao.findById(studentID);
+					student = hibernateStudentDao.findById(studentID);
 				} catch (DaoException e) {
 					e.printStackTrace();
 				}
 	            request.setAttribute("student", student);
 	        } else if (action.equalsIgnoreCase("StudentList")){
 	            forward = LIST_STUDENT;
-	            try {
-					request.setAttribute("students", jdbcStudentDao.findAll());
-				} catch (DaoException e) {
-					e.printStackTrace();
-				}
+	            request.setAttribute("students", hibernateStudentDao.findAll());
 	        } else {
 	            forward = INSERT_OR_EDIT;
 	        }
@@ -91,14 +82,14 @@ public class StudentServlet extends HttpServlet {
 			Student student = new Student();
 			student.setPersonID(studentID);
 			try {
-				student.setGroup(jdbcGroupDao.findById(groupID));
+				student.setGroup(hibernateGroupDao.findById(groupID));
 			} catch (DaoException e1) {
 				e1.printStackTrace();
 			}
 			student.setFirstName(firstName);
 			student.setLastName(lastName);
 			try {
-				jdbcStudentDao.addStudent(student);
+				hibernateStudentDao.addStudent(student);
 			} catch (DaoException e) {
 			}
         }
@@ -106,26 +97,22 @@ public class StudentServlet extends HttpServlet {
         {
         	long studentID = Long.parseLong(request.getParameter("studentID"));
     		try {
-    			student = jdbcStudentDao.findById(studentID);
+    			student = hibernateStudentDao.findById(studentID);
     		} catch (DaoException e2) {
     		}
     		try {
-    			student.setGroup(jdbcGroupDao.findById(Long.parseLong(request.getParameter("groupID"))));
+    			student.setGroup(hibernateGroupDao.findById(Long.parseLong(request.getParameter("groupID"))));
     		} catch (NumberFormatException | DaoException e1) {
     		}
     		student.setFirstName(request.getParameter("firstName"));
     		student.setLastName(request.getParameter("lastName"));
     		try {
-    			jdbcStudentDao.updateStudent(student);
+    			hibernateStudentDao.updateStudent(student);
     		} catch (DaoException e) {
     		}
         }
         RequestDispatcher view = request.getRequestDispatcher(LIST_STUDENT);
-        try {
-			request.setAttribute("students", jdbcStudentDao.findAll());
-		} catch (DaoException e) {
-			e.printStackTrace();
-		}
+        request.setAttribute("students", hibernateStudentDao.findAll());
         view.forward(request, response);
     }
 }
